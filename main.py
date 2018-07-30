@@ -5,7 +5,8 @@ from tkinter import *
 from tkinter import filedialog
 import shutil
 import time
-from PIL import Image
+import platform
+#from PIL import Image
 def set_rootdir():
     root = Tk()
     root.filename = filedialog.askdirectory(initialdir = "")
@@ -34,7 +35,7 @@ start_time = time.time()
 userInput = input("Enter what board you wish to go to, enter just the letter and nothing else: ")
 saveDest = set_rootdir()
 #page = requests.get("http://boards.4chan.org/"+userInput+"/")
-
+#could not get a valid HTTP readout from a boards "catalog" page, so it crawls through pages 1-10 to get all active threads
 for  i in range(1,11):
     if i ==1:
         page = requests.get("http://boards.4chan.org/" + userInput + "/")
@@ -68,6 +69,11 @@ print("")
 print(imageURL)
 print(len(imageURL))
 
+if platform.system() == "Windows":
+    slashType = "\\"
+else:
+    slashType = "/"
+#downloads the images to a destination folder
 for i in imageURL:
     try:
         link = "http:" + i
@@ -75,7 +81,7 @@ for i in imageURL:
         #myfile = Image.open(f)
         tempIndex = i.rfind('/')
         name = i[tempIndex + 1:]
-        out_file = saveDest+"\\"+name
+        out_file = saveDest+slashType+name
         response = requests.get(link, stream=True)
         with open(out_file, 'wb') as out_file:
             shutil.copyfileobj(response.raw, out_file)
