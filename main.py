@@ -94,8 +94,8 @@ rawThreadList = list(set(rawThreadList))
 
 # input("Do you want to download all images into single file, or multiple folders? yes / no")
 if (downloadDecision == "yes"):
-    for i in range(len(threadList)):
-        threadDict = (threadList[i].rsplit("/",1))
+    for i in range(len(rawThreadList)):
+        threadDict = (rawThreadList[i].rsplit("/",1))
         threadFile = saveDest + os.sep + threadDict[1]
         os.mkdir(threadFile)
         print(threadDict[0])
