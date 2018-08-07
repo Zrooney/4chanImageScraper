@@ -40,7 +40,7 @@ def imageURLGetter(threadURL):
     print(imageURL)
     return(imageURL)
 
-def imageDownloader(imageURL, fileLocation = ""):
+def imageDownloader(imageURL, recursiveFile = ""):
     for i in imageURL:
         try:
             link = "http:" + i
@@ -48,11 +48,10 @@ def imageDownloader(imageURL, fileLocation = ""):
             # myfile = Image.open(f)
             tempIndex = i.rfind('/')
             name = i[tempIndex + 1:]
-            print(name)
-            if fileLocation =="":
-                out_file = saveDest + os.sep  + name
+            if recursiveFile =="":
+                out_file = saveDest + os.sep + name
             else:
-                out_file = saveDest + os.sep + fileLocation + os.sep + name
+                out_file = saveDest + os.sep + recursiveFile + os.sep + name
             response = requests.get(link, stream=True)
             with open(out_file, 'wb') as out_file:
                 shutil.copyfileobj(response.raw, out_file)
@@ -89,30 +88,26 @@ for i in range(1,11):
         if (tempURL[-1:].islower() == True):
             rawThreadList.append(tempURL)
 
-rawThreadList = list(set(rawThreadList))
-
+threadList = list(set(rawThreadList))
+print(len(threadList))
 
 # input("Do you want to download all images into single file, or multiple folders? yes / no")
 if (downloadDecision == "yes"):
-    for i in range(len(rawThreadList)):
-        threadDict = (rawThreadList[i].rsplit("/",1))
+    for i in range(len(threadList)):
+        threadDict = (threadList[i].rsplit("/",1))
         threadFile = saveDest + os.sep + threadDict[1]
         os.mkdir(threadFile)
+        print(os.getcwd())
         print(threadDict[0])
         print(threadDict[1])
-        imageLink = imageURLGetter(threadDict[0])
-        imageDownloader(imageLink, threadDict[1])
+        imageURL = imageURLGetter(threadDict[0])
+        imageDownloader(imageURL, threadDict[1])
         imageURL.append(threadDict)
 else:
     for thread in threadList:
-        thread = "http://boards.4chan.org"+thread
-        threadPage = requests.get(thread)
-        threadSoup = BeautifulSoup(threadPage.content, 'html.parser')
-        for a in threadSoup.find_all('a', href=True):
-            tempURL = a['href']
-            if tempURL[-4:] in fileEndings:
-                print(tempURL)
-                rawImageURL.append((tempURL))
+        tempIndex = thread.rfind('/')
+        massThread = thread[:tempIndex]
+        rawImageURL = imageURLGetter(massThread)
         imageURL = list(set(rawImageURL))
 
         print(threadList)
@@ -120,22 +115,5 @@ else:
         print(imageURL)
         print(len(imageURL))
 
-        slashType = os.sep
-
-        for i in imageURL:
-            try:
-                link = "http:" + i
-                #f = urlopen(link)
-                #myfile = Image.open(f)
-                tempIndex = i.rfind('/')
-                name = i[tempIndex + 1:]
-                out_file = saveDest+slashType+name
-                response = requests.get(link, stream=True)
-                with open(out_file, 'wb') as out_file:
-                    shutil.copyfileobj(response.raw, out_file)
-                #myfile.save(saveDest+"\\"+name)
-                print("Downloaded " + name)
-            except:
-                print("Error Encountered")
-
+        imageDownloader(imageURL)
 print("--- %s seconds ---" % (time.time() - start_time))
