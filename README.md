@@ -5,4 +5,5 @@ to be pointed at a board, and it will download all pictures for that board (vg, 
 through direct stream copying. This project features a GUI for setting the root directory, while all other interaction is through cmd line.
 
 *If you decide to download into a single folder, the directory will look like RootDir(user set) -> image
+
 *If you decide to download to multiple folders, directory will look like RootDir(user set) - > file (named after the thread being parsed) -> image
