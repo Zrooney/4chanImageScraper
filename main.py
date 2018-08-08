@@ -38,9 +38,13 @@ def imageDownloader(imageURL, recursiveFile = "", saveDest = ""):
             name = i[tempIndex + 1:]
             if recursiveFile =="":
                 out_file = saveDest + os.sep + name
+                checkFile = saveDest + os.sep
             else:
                 out_file = saveDest + os.sep + recursiveFile + os.sep + name
-            if name in out_file:
+                checkFile = saveDest + os.sep + recursiveFile
+
+
+            if name in os.listdir(checkFile):
                 print(name + " already exists")
             else:
                 response = requests.get(link, stream=True)
